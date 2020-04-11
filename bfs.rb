@@ -9,14 +9,16 @@ E = {
   'F' => ['E']
 }
 
-VISITED = {}
 PARENT = {}
 QUEUE = []
+LEVEL = {}
 
+$cnt = 0
 def bfs_visit(v, parent)
-  if VISITED[v].nil?
-    VISITED[v] = true
+  $cnt = $cnt + 1
+  if PARENT[v].nil?
     PARENT[v] = parent
+    LEVEL[v] = (LEVEL[parent] || 0) + 1
     QUEUE.push(v)
   end 
 end
@@ -31,6 +33,33 @@ def bfs(v)
   end
 end
 
-bfs('S')
+def bfs_loop(v)
+  parent = {}
+  level = {}
+  queue = [v]
+  cnt = 0
+  queue.each do |u|
+    Array(E[u]).each do |v|
+      cnt = cnt + 1
+      if level[v].nil?
+        level[v] = (level[u] || 0) + 1
+        parent[v] = u
+        queue.push(v)
+      end
+    end
+  end
+  puts "node-to-parent: #{parent}"
+  puts "node-level:     #{level}"
+  puts "operations:     #{cnt}" 
+  puts "hint:           Number of operations is equal to number of edges in the graph"
+end
 
-p PARENT
+if ARGV.first == 'loop'
+  bfs_loop('S')
+else
+  bfs('S')
+  puts "node-to-parent: #{PARENT}"
+  puts "node-level:     #{LEVEL}"
+  puts "operations:     #{$cnt}"
+  puts "hint:           Number of operations is equal to number of edges in the graph"
+end
